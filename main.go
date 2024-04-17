@@ -29,9 +29,7 @@ func main() {
 	app.Use(config.CORS())
 
 	app.Use(logger.New())
-
-	app.Static("/", "./public")
-
+	
 	routers.Config(app)
 
 	app.Listen(":" + initializers.CONFIG.PORT)

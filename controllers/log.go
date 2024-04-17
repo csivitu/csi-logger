@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/csivitu/csi-logger/cache"
 	"github.com/csivitu/csi-logger/config"
 	"github.com/csivitu/csi-logger/helpers"
 	"github.com/csivitu/csi-logger/initializers"
@@ -45,6 +46,8 @@ func AddLog(c *fiber.Ctx) error {
 		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR, Err: err}
 	}
 
+	go cache.FlushCache(c.Context())
+
 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
 		"message": "Log Created",
 	})
@@ -62,6 +65,14 @@ func GetLogs(c *fiber.Ctx) error {
 		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid Query Params"}
 	}
 
+	cachedLogs, err := utils.FindCache(resourceID.String(), *urlParams, c.Context())
+	if err == nil {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status": "success",
+			"videos": cachedLogs,
+		})
+	}
+
 	db := initializers.DB
 
 	db = utils.FilterLogs(db, *urlParams)
@@ -72,6 +83,10 @@ func GetLogs(c *fiber.Ctx) error {
 		go helpers.LogDatabaseError("Error getting videos", err, "controllers/get_videos.go")
 		return helpers.AppError{Code: fiber.StatusBadRequest, Message: config.DATABASE_ERROR, Err: err}
 	}
+
+	cacheKey := fmt.Sprintf("%s-%d-%d", resourceID.String(), urlParams.Limit, urlParams.Page)
+
+	go cache.SetToCache(cacheKey, logs, c.Context())
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  "success",
