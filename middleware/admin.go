@@ -45,6 +45,7 @@ func AdminProtect(c *fiber.Ctx) error {
 	if !user.Admin {
 		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Not an admin"}
 	}
+	c.Set("loggedInUserID", user.ID.String())
 
 	return c.Next()
 }

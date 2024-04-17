@@ -11,5 +11,8 @@ type Resource struct {
 	Name      string    `gorm:"type:text;not null" json:"name"`
 	HostedURL string    `gorm:"unique;not null" json:"hosted_url"`
 	APIKey    string    `gorm:"unique;not null" json:"api_key"`
-	Timestamp time.Time `json:"timestamp" gorm:"index:idx_timestamp"`
+	UserID    uuid.UUID `gorm:"type:uuid;not null" json:"userID"`
+	User      User      `gorm:"" json:"user"`
+	Logs      []Log     `gorm:"foreignKey:ResourceID" json:"logs"`
+	CreatedAt time.Time `gorm:"default:current_timestamp" json:"postedAt"`
 }

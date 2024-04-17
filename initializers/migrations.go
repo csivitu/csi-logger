@@ -11,6 +11,7 @@ func AutoMigrate() {
 	DB.AutoMigrate(
 		&models.User{},
 		&models.Resource{},
+		&models.Log{},
 
 	)
 	fmt.Println("Migrations Finished!")

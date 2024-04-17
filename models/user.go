@@ -12,5 +12,5 @@ type User struct {
 	Email     string    `gorm:"unique;not null" json:"-"`
 	Password  string    `json:"-"`
 	Admin     bool      `gorm:"default:false" json:"-"`
-	Timestamp time.Time `json:"timestamp" gorm:"index:idx_timestamp"`
+	CreatedAt time.Time `gorm:"default:current_timestamp" json:"postedAt"`
 }

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-
 	"github.com/csivitu/csi-logger/config"
 	"github.com/csivitu/csi-logger/helpers"
 	"github.com/csivitu/csi-logger/initializers"
@@ -17,10 +16,15 @@ func CreateResource(c *fiber.Ctx) error {
 	if err := c.BodyParser(&reqBody); err != nil {
 		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Validation Failed"}
 	}
+	userID, err := uuid.Parse(c.GetRespHeader("loggedInUserID"))
+	if err != nil {
+		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid User ID"}
+	}
 
 	newResource := models.Resource{
 		Name: reqBody.Name,
 		HostedURL: reqBody.HostedURL,
+		UserID: userID,
 	}
 
 	result := initializers.DB.Create(&newResource)
@@ -53,7 +57,7 @@ func GetAllResources(c *fiber.Ctx) error {
 
 	result := initializers.DB.Find(&resources)
 	if result.Error != nil {
-		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR, Err: result.Error}
+		return &fiber.Error{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR}
 	}
 
 	return c.JSON(fiber.Map{
@@ -65,7 +69,7 @@ func GetAllResources(c *fiber.Ctx) error {
 func DeleteResource (c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
-		return helpers.AppError{Code: fiber.StatusBadRequest, Message: "Invalid ID", Err: err}
+		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid ID"}
 	}
 
 	var resource models.Resource
@@ -89,13 +93,13 @@ func DeleteResource (c *fiber.Ctx) error {
 func UpdateResource(c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
-		return helpers.AppError{Code: fiber.StatusBadRequest, Message: "Invalid ID", Err: err}
+		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid ID"}
 	}
 
 	var reqBody schemas.ResourceUpdateSchema
 
 	if err := c.BodyParser(&reqBody); err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Validation Failed"}
+		return &fiber.Error{Code: fiber.StatusInternalServerError, Message: "Validation Failed"}
 	}
 
 	var resource models.Resource
