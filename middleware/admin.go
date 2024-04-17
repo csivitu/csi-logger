@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/csivitu/csi-logger/initializers"
+	"github.com/csivitu/csi-logger/models"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,13 +13,37 @@ func RootUserProtect(c *fiber.Ctx) error {
 	tokenArr := strings.Split(authHeader, " ")
 
 	if len(tokenArr) != 2 {
-		return &fiber.Error{Code: 401, Message: "Unauthorized."}
+		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Unauthorized."}
 	}
 
 	tokenString := tokenArr[1]
 
 	if tokenString != initializers.CONFIG.ROOT_PASSWORD{
-		return &fiber.Error{Code: 401, Message: "Not a root user"}
+		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Not a root user"}
+	}
+
+	return c.Next()
+}
+
+
+func AdminProtect(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	tokenArr := strings.Split(authHeader, " ")
+
+	if len(tokenArr) != 2 {
+		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Unauthorized."}
+	}
+
+	tokenString := tokenArr[1]
+
+	var user models.User
+	err := verifyToken(tokenString, &user)
+	if err != nil {
+		return err
+	}
+
+	if !user.Admin {
+		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Not an admin"}
 	}
 
 	return c.Next()

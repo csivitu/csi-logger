@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type Log struct {
+type Resource struct {
 	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id"`
-	Message   string    `gorm:"type:text" json:"message"`
-	Path      string    `gorm:"type:text" json:"path"`
-	Resource  string    `gorm:"index:idx_resource" json:"resource"`
+	Name      string    `gorm:"type:text;not null" json:"name"`
+	HostedURL string    `gorm:"unique;not null" json:"hosted_url"`
+	APIKey    string    `gorm:"unique;not null" json:"api_key"`
 	Timestamp time.Time `json:"timestamp" gorm:"index:idx_timestamp"`
 }

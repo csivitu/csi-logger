@@ -6,4 +6,5 @@ import (
 
 func Config(app *fiber.App) {
 	UserRouter(app)
+	ResourceRouter(app)
 }
