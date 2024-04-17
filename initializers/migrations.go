@@ -9,7 +9,7 @@ import (
 func AutoMigrate() {
 	fmt.Println("\nStarting Migrations...")
 	DB.AutoMigrate(
-		&models.Log{},
+		&models.User{},
 
 	)
 	fmt.Println("Migrations Finished!")

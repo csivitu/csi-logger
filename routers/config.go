@@ -5,5 +5,5 @@ import (
 )
 
 func Config(app *fiber.App) {
-	LogRouter(app)
+	UserRouter(app)
 }

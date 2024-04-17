@@ -8,18 +8,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-
 type Config struct {
-	PORT                 string      `mapstructure:"PORT"`
-	DB_HOST              string      `mapstructure:"DB_HOST"`
-	DB_PORT              string      `mapstructure:"DB_PORT"`
-	DB_NAME              string      `mapstructure:"DB_NAME"`
-	DB_USER              string      `mapstructure:"DB_USER"`
-	DB_PASSWORD          string      `mapstructure:"DB_PASSWORD"`
-	REDIS_HOST           string      `mapstructure:"REDIS_HOST"`
-	REDIS_PORT           string      `mapstructure:"REDIS_PORT"`
-	REDIS_PASSWORD       string      `mapstructure:"REDIS_PASSWORD"`
-	JWT_SECRET           string      `mapstructure:"JWT_SECRET"`
+	PORT           string `mapstructure:"PORT"`
+	DB_HOST        string `mapstructure:"DB_HOST"`
+	DB_PORT        string `mapstructure:"DB_PORT"`
+	DB_NAME        string `mapstructure:"DB_NAME"`
+	DB_USER        string `mapstructure:"DB_USER"`
+	DB_PASSWORD    string `mapstructure:"DB_PASSWORD"`
+	REDIS_HOST     string `mapstructure:"REDIS_HOST"`
+	REDIS_PORT     string `mapstructure:"REDIS_PORT"`
+	REDIS_PASSWORD string `mapstructure:"REDIS_PASSWORD"`
+	JWT_SECRET     string `mapstructure:"JWT_SECRET"`
+	AES_KEY        string `mapstructure:"AES_KEY"`
+	ROOT_PASSWORD  string `mapstructure:"ROOT_PASSWORD"`
 }
 
 var CONFIG Config
