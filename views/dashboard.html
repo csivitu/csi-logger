@@ -1,11 +1,39 @@
 {{template "partials/header" .}}
 
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        console.log("hello world")
-    });
-</script>
-
 <body class="bg-slate-300 h-full font-mono">
-    <h1>Yay?</h1>
+    <main class="flex flex-col items-center justify-center md:w-[80%] w-full mx-auto">
+        <h1 class="text-4xl py-10">Resources</h1>
+        <ul role="list" class="divide-y divide-gray-100">
+            {{range .Resources}}
+            <li class="flex flex-col md:flex-row justify-between gap-x-6 py-5 gap-y-4">
+                <div class="flex min-w-0 gap-x-4">
+                    <div class="min-w-0 flex-auto">
+                        <p class="text-sm font-semibold leading-6 text-gray-900">{{.Name}}</p>
+                        <a href="{{.HostedURL}}"
+                            class="mt-1 truncate text-xs leading-5 text-gray-500">{{.HostedURL}}</a>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end">
+                    <p class="text-xs leading-6 text-gray-900 text-wrap" id="apiKey">{{.APIKey}}</p>
+                    <button class="mt-1 text-xs leading-5 text-gray-500"
+                        onclick="copyToClipboard('{{.APIKey}}', this)">Copy</button>
+                </div>
+            </li>
+            {{end}}
+        </ul>
+    </main>
+
 </body>
+
+<script>
+    function copyToClipboard(apiKey, btn) {
+        navigator.clipboard.writeText(apiKey)
+            .then(() => {
+                btn.innerText = 'Copied';
+                btn.style.color = 'green';
+            })
+            .catch(err => {
+                console.error('Failed to copy API key: ', err);
+            });
+    }
+</script>

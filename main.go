@@ -33,6 +33,8 @@ func main() {
 	app.Use(config.CORS())
 
 	app.Use(logger.New())
+
+	app.Use(config.CORSEmbeddeerPolicy)
 	
 	routers.Config(app)
 

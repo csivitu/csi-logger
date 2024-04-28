@@ -10,5 +10,11 @@ func CORS() fiber.Handler {
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PATCH, DELETE",
 		AllowOrigins:    "*",
+
 	})
+}
+
+func CORSEmbeddeerPolicy(c *fiber.Ctx) error {
+	c.Set("Cross-Origin-Embedder-Policy", "credentialless")
+	return c.Next()
 }

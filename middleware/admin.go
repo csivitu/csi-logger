@@ -27,17 +27,8 @@ func RootUserProtect(c *fiber.Ctx) error {
 
 
 func AdminProtect(c *fiber.Ctx) error {
-	authHeader := c.Get("Authorization")
-	tokenArr := strings.Split(authHeader, " ")
-
-	if len(tokenArr) != 2 {
-		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Unauthorized."}
-	}
-
-	tokenString := tokenArr[1]
-
 	var user models.User
-	err := verifyToken(tokenString, &user)
+	err := verifyToken(c, &user)
 	if err != nil {
 		return err
 	}
