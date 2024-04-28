@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/template/html/v2"
 )
 
 func init() {
@@ -21,8 +22,11 @@ func init() {
 func main() {
 	defer initializers.LoggerCleanUp()
 
+	engine := html.New("./views", ".html")
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: helpers.ErrorHandler,
+		Views: engine,
 	})
 
 	app.Use(helmet.New())

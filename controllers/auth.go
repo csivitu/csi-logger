@@ -90,9 +90,29 @@ func Login(c *fiber.Ctx) error {
 		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.SERVER_ERROR, Err: err}
 	}
 
-	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-		"status": "success",
-		"message": "Successfully logged in!",
-		"token": access_token,
+	sess, err := config.Store.Get(c)
+    if err != nil {
+        return err
+    }
+
+	sess.Set("jwt", access_token)
+
+	if err := sess.Save(); err != nil {
+        return err
+    }
+
+	return c.Redirect("/dashboard")
+
+	// return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+	// 	"status": "success",
+	// 	"message": "Successfully logged in!",
+	// 	"token": access_token,
+	// })
+}
+
+func LoginView(c *fiber.Ctx) error {
+    c.Set("Cross-Origin-Embedder-Policy", "credentialless")
+	return c.Render("index", fiber.Map{
+		"Title": "Login | CSI Logger",
 	})
 }
