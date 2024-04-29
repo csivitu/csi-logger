@@ -35,6 +35,6 @@ func ResourceProtect(c *fiber.Ctx) error {
 		return &fiber.Error{Code: fiber.StatusUnauthorized, Message: "Resource Not Found"}
 	}
 
-	c.Set("resourceID", resource.ID.String())
+	c.Locals("resource", resource)
 	return c.Next()
 }

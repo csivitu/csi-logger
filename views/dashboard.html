@@ -1,21 +1,21 @@
 {{template "partials/header" .}}
 
-<body class="bg-slate-300 h-full font-mono">
+<body class="bg-slate-300 h-full font-mono w-full">
     <main class="flex flex-col items-center justify-center md:w-[80%] w-full mx-auto">
         <h1 class="text-4xl py-10">Resources</h1>
-        <ul role="list" class="divide-y divide-gray-100">
+        <ul role="list" class="ml-12 md:ml-0 divide-y divide-gray-100">
             {{range .Resources}}
-            <li class="flex flex-col md:flex-row justify-between gap-x-6 py-5 gap-y-4">
+            <li class="flex flex-col md:flex-row justify-between md:gap-x-6 py-5 gap-y-4">
                 <div class="flex min-w-0 gap-x-4">
-                    <div class="min-w-0 flex-auto">
+                    <div class="flex flex-col gap-2">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{.Name}}</p>
                         <a href="{{.HostedURL}}"
                             class="mt-1 truncate text-xs leading-5 text-gray-500 underline">{{.HostedURL}}</a>
                     </div>
                 </div>
                 {{if $.isAdmin}}
-                <div class="flex flex-col items-end">
-                    <p class="text-xs leading-6 text-gray-900 text-wrap" id="apiKey">{{.APIKey}}</p>
+                <div class="flex flex-col items-end w-full max-w-[80%]">
+                    <p class="text-xs leading-6 text-gray-900 truncate" id="apiKey">{{.APIKey}}</p>
                     <button class="mt-1 text-xs leading-5 text-gray-500"
                         onclick="copyToClipboard('{{.APIKey}}', this)">Copy</button>
                 </div>

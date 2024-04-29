@@ -12,14 +12,10 @@ import (
 	"github.com/csivitu/csi-logger/schemas"
 	"github.com/csivitu/csi-logger/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 func AddLog(c *fiber.Ctx) error {
-	resourceID, err := uuid.Parse(c.GetRespHeader("resourceID"))
-	if err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid Resource ID"}
-	}
+	resource := c.Locals("resource").(models.Resource)
 
 	var reqBody schemas.LogEntrySchema
 
@@ -37,7 +33,7 @@ func AddLog(c *fiber.Ctx) error {
 		Message:    reqBody.Message,
 		Level:      reqBody.Level,
 		Path:       reqBody.Path,
-		ResourceID: resourceID,
+		ResourceID: resource.ID,
 		Timestamp:  timestamp,
 	}
 
@@ -54,18 +50,14 @@ func AddLog(c *fiber.Ctx) error {
 }
 
 func GetLogs(c *fiber.Ctx) error {
-
-	resourceID, err := uuid.Parse(c.GetRespHeader("resourceID"))
-	if err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid Resource ID"}
-	}
+	resource := c.Locals("resource").(models.Resource)
 
 	urlParams, err := helpers.ValidateLogURLParams(c)
 	if err != nil {
 		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid Query Params"}
 	}
 
-	cachedLogs, err := utils.FindCache(resourceID.String(), *urlParams, c.Context())
+	cachedLogs, err := utils.FindCache(resource.ID.String(), *urlParams, c.Context())
 	if err == nil {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"status": "success",
@@ -79,12 +71,12 @@ func GetLogs(c *fiber.Ctx) error {
 
 	var logs []models.Log
 
-	if err := db.Order("timestamp desc").Find(&logs, "resource_id = ?", resourceID).Error; err != nil {
+	if err := db.Order("timestamp desc").Find(&logs, "resource_id = ?", resource.ID).Error; err != nil {
 		go helpers.LogDatabaseError("Error getting videos", err, "controllers/get_videos.go")
 		return helpers.AppError{Code: fiber.StatusBadRequest, Message: config.DATABASE_ERROR, Err: err}
 	}
 
-	cacheKey := fmt.Sprintf("%s-%d-%d", resourceID.String(), urlParams.Limit, urlParams.Page)
+	cacheKey := fmt.Sprintf("%s-%d-%d", resource.ID.String(), urlParams.Limit, urlParams.Page)
 
 	go cache.SetToCache(cacheKey, logs, c.Context())
 
