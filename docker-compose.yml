@@ -24,7 +24,7 @@ services:
     networks:
       - logger-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:${PORT}/ping"]
+      test: ["CMD", "wget", "--spider", "http://127.0.0.1:${PORT}/ping"]
       interval: 5s
       timeout: 5s
       retries: 3
