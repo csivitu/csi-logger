@@ -6,3 +6,4 @@
 bucket-key*.json
 main
 tmp/
+tailwind.config.*
