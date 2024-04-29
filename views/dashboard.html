@@ -13,15 +13,21 @@
                             class="mt-1 truncate text-xs leading-5 text-gray-500 underline">{{.HostedURL}}</a>
                     </div>
                 </div>
+                {{if $.isAdmin}}
                 <div class="flex flex-col items-end">
                     <p class="text-xs leading-6 text-gray-900 text-wrap" id="apiKey">{{.APIKey}}</p>
                     <button class="mt-1 text-xs leading-5 text-gray-500"
                         onclick="copyToClipboard('{{.APIKey}}', this)">Copy</button>
                 </div>
+                <form action="/resource/delete/{{.ID}}" method="POST">
+                    <button class="mt-1 px-2 py-1 text-xs text-white bg-red-600 hover:bg-red-700 rounded"
+                        type="submit">Delete</button>
+                </form>
+                {{end}}
             </li>
             {{end}}
         </ul>
-        <a href= "/dashboard/create" class="mt-10 text-sm leading-6 text-gray-500 underline">Create a new resource</a>
+        <a href="/dashboard/create" class="mt-10 text-sm leading-6 text-gray-500 underline">Create a new resource</a>
     </main>
 
 </body>

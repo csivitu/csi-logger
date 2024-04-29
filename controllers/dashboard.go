@@ -28,6 +28,7 @@ func DashboardView(c *fiber.Ctx) error {
 	return c.Render("dashboard", fiber.Map{
 		"Title": "Dashboard",
 		"Resources": resources,
+		"isAdmin": user.Admin,
 	})
 }
 

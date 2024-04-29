@@ -12,7 +12,7 @@ func ResourceRouter(app *fiber.App) {
 
 	resourceRoutes.Post("/", controllers.CreateResource)
 	resourceRoutes.Get("/", controllers.GetAllResources)
-	resourceRoutes.Delete("/:id", controllers.DeleteResource)
+	resourceRoutes.Post("/delete/:id", controllers.DeleteResource)
 	resourceRoutes.Patch("/:id", controllers.UpdateResource)
 
 }

@@ -78,25 +78,34 @@ func GetAllResources(c *fiber.Ctx) error {
 func DeleteResource (c *fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid ID"}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusBadRequest,
+			"Message":     "Invalid resource ID",
+			"Title":       "Error",
+		})
 	}
 
 	var resource models.Resource
 
 	result := initializers.DB.Where("id = ?", id).First(&resource)
 	if result.Error != nil {
-		return helpers.AppError{Code: fiber.StatusNotFound, Message: "Resource not found", Err: result.Error}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusNotFound,
+			"Message":     "Resource not found",
+			"Title":       "Error",
+		})
 	}
 
 	result = initializers.DB.Delete(&resource)
 	if result.Error != nil {
-		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR, Err: result.Error}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusInternalServerError,
+			"Message":     "Internal server error",
+			"Title":       "Error",
+		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status": "success",
-		"message": "Resource deleted",
-	})
+	return c.Redirect("/dashboard")
 }
 
 func UpdateResource(c *fiber.Ctx) error {
