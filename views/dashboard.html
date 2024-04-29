@@ -27,7 +27,9 @@
             </li>
             {{end}}
         </ul>
-        <a href="/dashboard/create" class="mt-10 text-sm leading-6 text-gray-500 underline">Create a new resource</a>
+        {{if $.isAdmin}}
+            <a href="/dashboard/create" class="mt-10 text-sm leading-6 text-gray-500 underline">Create a new resource</a>
+        {{end}}
     </main>
 
 </body>
