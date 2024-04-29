@@ -9,4 +9,5 @@ func Config(app *fiber.App) {
 	ResourceRouter(app)
 	LogRouter(app)
 	ViewsRouter(app)
+	PingRouter(app)
 }
