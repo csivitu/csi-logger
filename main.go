@@ -31,8 +31,9 @@ func main() {
 
 	app.Use(helmet.New())
 	app.Use(config.CORS())
-
 	app.Use(logger.New())
+
+	app.Static("/static", "./static")
 
 	app.Use(config.CORSEmbeddeerPolicy)
 	
