@@ -1,16 +1,15 @@
 package middlewares
 
 import (
-
 	"github.com/csivitu/csi-logger/config"
 	"github.com/csivitu/csi-logger/initializers"
 	"github.com/csivitu/csi-logger/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 func verifyToken(c *fiber.Ctx, user *models.User) error {
-
 	sess, err := config.Store.Get(c)
 	if err != nil {
 		return c.Render("error", fiber.Map{
@@ -19,10 +18,9 @@ func verifyToken(c *fiber.Ctx, user *models.User) error {
 			"Title":       "Error",
 		})
 	}
-
 	userID := sess.Get("userID")
 	if userID == nil || userID == "" {
-		return c.Render("error", fiber.Map{
+		return c.Status(fiber.StatusForbidden).Render("error", fiber.Map{
 			"Status_Code": 	fiber.StatusUnauthorized,
 			"Message":     "Session not found!",
 			"Title":       "Error",
@@ -48,14 +46,12 @@ func verifyToken(c *fiber.Ctx, user *models.User) error {
 }
 
 func Protect(c *fiber.Ctx) error {
-
 	var user models.User
 	err := verifyToken(c, &user)
 	
-	if err != nil {
+	if err != nil || user.ID == uuid.Nil {
 		return err
 	}
-
 	c.Locals("loggedInUser", user)
 
 	return c.Next()

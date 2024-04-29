@@ -10,4 +10,5 @@ func ViewsRouter(app *fiber.App) {
 
 	app.Get("/", controllers.LoginView)
 	app.Get("/dashboard", middlewares.Protect, controllers.DashboardView)
+	app.Get("/dashboard/create", middlewares.AdminProtect , controllers.DashboardResourceCreateView)
 }

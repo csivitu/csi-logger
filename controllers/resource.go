@@ -11,45 +11,54 @@ import (
 )
 
 func CreateResource(c *fiber.Ctx) error {
+	user := c.Locals("loggedInUser").(models.User)
 	var reqBody schemas.ResourceCreateSchema
 
 	if err := c.BodyParser(&reqBody); err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Validation Failed"}
-	}
-	userID, err := uuid.Parse(c.GetRespHeader("loggedInUserID"))
-	if err != nil {
-		return &fiber.Error{Code: fiber.StatusBadRequest, Message: "Invalid User ID"}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusBadRequest,
+			"Message":     "Validation failed",
+			"Title":       "Error",
+		})
 	}
 
 	newResource := models.Resource{
 		Name: reqBody.Name,
 		HostedURL: reqBody.HostedURL,
-		UserID: userID,
+		UserID: user.ID,
 	}
 
 	result := initializers.DB.Create(&newResource)
 	if result.Error != nil {
-		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR , Err: result.Error}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusInternalServerError,
+			"Message":     "Internal server error",
+			"Title":       "Error",
+		})
 	}
 
 	apiKey, err := helpers.Encrypt([]byte(newResource.ID.String()))
 	if err != nil {
 		go helpers.LogServerError("Error while encrypting API Key.", err, c.Path())
-		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.SERVER_ERROR, Err: err}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusInternalServerError,
+			"Message":     "Internal server error",
+			"Title":       "Error",
+		})
 	}
 
 	newResource.APIKey = string(apiKey)
 
 	result = initializers.DB.Save(&newResource)
 	if result.Error != nil {
-		return helpers.AppError{Code: fiber.StatusInternalServerError, Message: config.DATABASE_ERROR, Err: result.Error}
+		return c.Render("error", fiber.Map{
+			"Status_Code": 	fiber.StatusInternalServerError,
+			"Message":     "Internal server error",
+			"Title":       "Error",
+		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"status": "success",
-		"message": "Resource created",
-		"api_key": newResource.APIKey,
-	})
+	return c.Redirect("/dashboard")
 }
 
 func GetAllResources(c *fiber.Ctx) error {

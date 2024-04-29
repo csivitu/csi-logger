@@ -13,7 +13,7 @@ func DashboardView(c *fiber.Ctx) error {
 	var resources []models.Resource
 	if err := initializers.DB.Find(&resources); err.Error != nil {
 		return c.Render("error", fiber.Map{
-			"Status_Code": 	400,
+			"Status_Code":  fiber.StatusBadRequest,
 			"Message":     "No resources found",
 			"Title":       "Error",
 		})
@@ -28,5 +28,11 @@ func DashboardView(c *fiber.Ctx) error {
 	return c.Render("dashboard", fiber.Map{
 		"Title": "Dashboard",
 		"Resources": resources,
+	})
+}
+
+func DashboardResourceCreateView(c *fiber.Ctx) error {
+	return c.Render("create", fiber.Map{
+		"Title": "Create Resource",
 	})
 }
