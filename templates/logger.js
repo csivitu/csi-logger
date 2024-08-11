@@ -37,20 +37,20 @@ const formatconfig = winston.format.combine(
 const createLog = (level) => {
   const transports = [];
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') {
     transports.push(
-      new winston.transports.Console({
-        level,
+      new AuthTransport({
+        url: `${process.env.LOGGER_URL}/log`,
         format: formatconfig,
+        auth: process.env.LOGGER_AUTH
       })
     );
   }
 
   transports.push(
-    new AuthTransport({
-      url: "http://localhost:3000/log",
+    new winston.transports.Console({
+      level,
       format: formatconfig,
-      auth: "something cool"
     })
   );
 
