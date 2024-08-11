@@ -34,25 +34,35 @@ const formatconfig = winston.format.combine(
   winston.format.errors({ stack: true })
 );
 
-const createLog = (level) =>
-  winston.createLogger({
-    transports: [
+const createLog = (level) => {
+  const transports = [];
+
+  if (process.env.NODE_ENV !== 'production') {
+    transports.push(
       new winston.transports.Console({
         level,
         format: formatconfig,
-      }),
-      new AuthTransport({
-        url: "http://localhost:3000/log",
-        format: formatconfig,
-        auth: "something cool"
-      }),
-    ],
+      })
+    );
+  }
+
+  transports.push(
+    new AuthTransport({
+      url: "http://localhost:3000/log",
+      format: formatconfig,
+      auth: "something cool"
+    })
+  );
+
+  return winston.createLogger({
+    transports,
     exceptionHandlers: [
       new winston.transports.Console({
         format: formatconfig,
       }),
     ],
   });
+};
 
 const errorLogger = createLog('error');
 const infoLogger = createLog('info');
